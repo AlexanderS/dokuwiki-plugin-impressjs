@@ -22,9 +22,16 @@ class renderer_plugin_impressjs extends Doku_Renderer_xhtml {
     public function document_start(){
         global $conf;
         global $ID;
+        global $updateVersion;
         
         $this->base = DOKU_BASE.'lib/plugins/impressjs/tpl/';
         $this->tpl  = $this->getConf('template');
+
+        // prepare seed for js and css
+        $tseed   = $updateVersion;
+        $depends = getConfigFiles('main');
+        foreach($depends as $f) $tseed .= @filemtime($f);
+        $tseed   = md5($tseed);
         
         $this->doc .= '<!DOCTYPE html>
 <html lang="'.$conf['lang'].'">
@@ -36,7 +43,7 @@ class renderer_plugin_impressjs extends Doku_Renderer_xhtml {
     <meta name="generator" content="impress.js" />
     <meta name="version" content="impress.js ab44798b081997319f4207dabbb052736acfc512" />
                 
-    <link rel="stylesheet" href="'.DOKU_BASE.'lib/styles/screen.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="'.DOKU_BASE.'lib/exe/css.php?t=none&tseed='.$tseed.'" type="text/css" media="screen" />
     <link href="'.$this->base.$this->tpl.'/impress.css" rel="stylesheet" />
     <link href="'.$this->base.$this->tpl.'/impress-extra.css" rel="stylesheet" />
 </head>
